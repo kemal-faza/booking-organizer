@@ -1,16 +1,19 @@
 import { google } from 'googleapis';
 import { JadwalBooking } from './types';
 
+const credentialBase64 = process.env.GOOGLE_CREDENTIALS_BASE64;
+const credentialJSONString = Buffer.from(
+	credentialBase64 as string,
+	'base64',
+).toString('utf8');
+const credentials = JSON.parse(credentialJSONString);
+credentials.private_key = credentials.private_key
+	.split(String.raw`\n`)
+	.join('\n');
+
 const auth = await google.auth.getClient({
 	projectId: process.env.PROJECT_ID,
-	credentials: {
-		type: process.env.TYPE,
-		project_id: process.env.PROJECT_ID,
-		private_key_id: process.env.PRIVATE_KEY_ID,
-		private_key: process.env.PRIVATE_KEY?.split(String.raw`\n`).join('\n'),
-		client_email: process.env.CLIENT_EMAIL,
-		universe_domain: process.env.UNIVERSE_DOMAIN,
-	},
+	credentials,
 	scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 const gSheets = google.sheets({ version: 'v4', auth });
