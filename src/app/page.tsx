@@ -14,11 +14,11 @@ import React from 'react';
 import AddForm from '@/components/dashboard/AddForm';
 import EditForm from '@/components/dashboard/EditForm';
 import DeleteForm from '@/components/dashboard/DeleteForm';
-import { getAllJadwal, getDataWithoutHeader } from '@/lib/google-sheets.action';
 import { DateTime } from 'luxon';
+import { getAllJadwal, getJadwalWithoutHeader } from '@/lib/action';
 
 export default async function Home() {
-	const allJadwal = getDataWithoutHeader(await getAllJadwal());
+	const allJadwal = await getJadwalWithoutHeader(await getAllJadwal());
 	return (
 		<div className="p-4">
 			<div className="flex justify-between">
@@ -59,7 +59,7 @@ export default async function Home() {
 							</CardContent>
 							<CardFooter className="flex flex-col gap-2.5">
 								<EditForm jadwal={jadwal} />
-								<DeleteForm />
+								<DeleteForm jadwal={jadwal} />
 							</CardFooter>
 						</Card>
 					);

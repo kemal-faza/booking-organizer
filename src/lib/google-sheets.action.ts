@@ -1,6 +1,4 @@
 import { google } from 'googleapis';
-import { JadwalBooking } from './types';
-import { v4 as uuidv4 } from 'uuid';
 
 const credentialBase64 = process.env.GOOGLE_CREDENTIALS_BASE64;
 const credentialJSONString = Buffer.from(
@@ -19,70 +17,44 @@ const auth = await google.auth.getClient({
 });
 const gSheets = google.sheets({ version: 'v4', auth });
 
-export function getDataWithoutHeader(data: string[]) {
-	return [...data.slice(1)].map((item) => {
-		return {
-			id: item[0],
-			judul: item[1],
-			tanggal_posting: item[2],
-			jam_posting: item[3],
-			link_gdrive: item[4],
-		};
-	}) as JadwalBooking[];
-}
-
-export async function getAllJadwal() {
+export async function getAllData(range: string) {
 	const response = await gSheets.spreadsheets.values.get({
 		spreadsheetId: process.env.SPREADSHEET_ID,
-		range: 'Jadwal Postingan!A:E',
+		range,
 	});
 
 	const data = response.data.values as unknown as string[];
 	return data;
 }
 
-export async function addJadwal(data: JadwalBooking) {
+export async function addData(range: string, data: string[]) {
 	await gSheets.spreadsheets.values.append({
 		auth,
 		spreadsheetId: process.env.SPREADSHEET_ID,
-		range: 'Jadwal Postingan!A:E',
+		range,
 		valueInputOption: 'USER_ENTERED',
 		requestBody: {
-			values: [
-				[
-					uuidv4(),
-					data.judul,
-					data.tanggal_posting,
-					data.jam_posting,
-					data.link_gdrive,
-				],
-			],
+			values: [data as unknown as string[]],
 		},
 	});
 }
 
-export async function editJadwal(data: JadwalBooking) {
-	const prevData = await getAllJadwal();
-	const currentData = prevData.map((jadwal) => {
-		if (jadwal[0] == data.id) {
-			return [
-				jadwal[0],
-				data.judul,
-				data.tanggal_posting,
-				data.jam_posting,
-				data.link_gdrive,
-			];
-		} else {
-			return jadwal;
-		}
-	});
+export async function editData(range: string, data: string[][]) {
 	await gSheets.spreadsheets.values.update({
 		auth,
 		spreadsheetId: process.env.SPREADSHEET_ID,
-		range: 'Jadwal Postingan!A:E',
+		range,
 		valueInputOption: 'USER_ENTERED',
 		requestBody: {
-			values: currentData as unknown as string[][],
+			values: data as unknown as string[][],
 		},
+	});
+}
+
+export async function deleteData(range: string) {
+	await gSheets.spreadsheets.values.clear({
+		auth,
+		spreadsheetId: process.env.SPREADSHEET_ID,
+		range,
 	});
 }

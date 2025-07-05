@@ -1,3 +1,4 @@
+'use client';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -11,8 +12,14 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '../ui/button';
 import { Trash2 } from 'lucide-react';
+import { JadwalBooking } from '@/lib/types';
+import { deleteJadwal } from '@/lib/action';
 
-export default function DeleteForm() {
+export default function DeleteForm({ jadwal }: { jadwal: JadwalBooking }) {
+	const deleteJadwalWithId = deleteJadwal.bind(null, jadwal.id);
+	const handleClick = () => {
+		deleteJadwalWithId();
+	};
 	return (
 		<AlertDialog>
 			<AlertDialogTrigger asChild>
@@ -33,7 +40,9 @@ export default function DeleteForm() {
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel>Batal</AlertDialogCancel>
-					<AlertDialogAction className="bg-destructive">
+					<AlertDialogAction
+						className="bg-destructive"
+						onClick={handleClick}>
 						<Trash2 />
 						Lanjutkan
 					</AlertDialogAction>
