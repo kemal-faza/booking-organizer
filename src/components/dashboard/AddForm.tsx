@@ -20,7 +20,6 @@ import { Calendar } from '@/components/ui/calendar';
 import { Button } from '../ui/button';
 import { ChevronDownIcon, Plus } from 'lucide-react';
 import { useActionState, useState } from 'react';
-import handleFormAddJadwal from '@/lib/action';
 import {
 	Select,
 	SelectContent,
@@ -30,6 +29,7 @@ import {
 } from '../ui/select';
 import { jam_posting } from '@/lib/data';
 import { oldFormValue, showErrorMessage } from '@/lib/utils';
+import { handleFormAddJadwal } from '@/lib/action';
 
 export default function AddForm() {
 	const [open, setOpen] = useState(false);
@@ -38,6 +38,7 @@ export default function AddForm() {
 		handleFormAddJadwal,
 		null,
 	);
+
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
@@ -49,7 +50,7 @@ export default function AddForm() {
 				<DialogHeader>
 					<DialogTitle>Tambah Jadwal Postingan</DialogTitle>
 					<DialogDescription>
-						Tambahkan judul dan waktu posting
+						Tambahkan judul, tanggal posting, dan jam posting
 					</DialogDescription>
 				</DialogHeader>
 				<form

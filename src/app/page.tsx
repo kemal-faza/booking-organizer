@@ -14,11 +14,11 @@ import React from 'react';
 import AddForm from '@/components/dashboard/AddForm';
 import EditForm from '@/components/dashboard/EditForm';
 import DeleteForm from '@/components/dashboard/DeleteForm';
-import { getAllJadwal } from '@/lib/google-sheets.action';
+import { getAllJadwal, getDataWithoutHeader } from '@/lib/google-sheets.action';
 import { DateTime } from 'luxon';
 
 export default async function Home() {
-	const allJadwal = await getAllJadwal();
+	const allJadwal = getDataWithoutHeader(await getAllJadwal());
 	return (
 		<div className="p-4">
 			<div className="flex justify-between">
@@ -29,7 +29,7 @@ export default async function Home() {
 				</Button>
 				<AddForm />
 			</div>
-			<div className="flex-col gap-3 mt-5">
+			<div className="flex flex-col gap-5 mt-5">
 				{allJadwal.map((jadwal, index) => {
 					const tanggal_posting = DateTime.fromJSDate(
 						new Date(jadwal.tanggal_posting),
@@ -57,8 +57,8 @@ export default async function Home() {
 									Google Drive
 								</Link>
 							</CardContent>
-							<CardFooter className="flex-col gap-2.5">
-								<EditForm />
+							<CardFooter className="flex flex-col gap-2.5">
+								<EditForm jadwal={jadwal} />
 								<DeleteForm />
 							</CardFooter>
 						</Card>
