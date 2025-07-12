@@ -17,6 +17,17 @@ const auth = await google.auth.getClient({
 });
 const gSheets = google.sheets({ version: 'v4', auth });
 
+async function getSheetIdByName(sheetName: string) {
+	const response = await gSheets.spreadsheets.get({
+		spreadsheetId: process.env.SPREADSHEET_ID,
+		auth,
+	});
+	const sheet = response.data.sheets?.find(
+		(s) => s.properties?.title === sheetName,
+	);
+	return sheet?.properties?.sheetId;
+}
+
 export async function getAllData(range: string) {
 	const response = await gSheets.spreadsheets.values.get({
 		spreadsheetId: process.env.SPREADSHEET_ID,
@@ -51,10 +62,24 @@ export async function editData(range: string, data: string[][]) {
 	});
 }
 
-export async function deleteData(range: string) {
-	await gSheets.spreadsheets.values.clear({
+export async function deleteData(index: number, sheetName: string) {
+	const sheetId = await getSheetIdByName(sheetName);
+	await gSheets.spreadsheets.batchUpdate({
 		auth,
 		spreadsheetId: process.env.SPREADSHEET_ID,
-		range,
+		requestBody: {
+			requests: [
+				{
+					deleteDimension: {
+						range: {
+							sheetId,
+							dimension: 'ROWS',
+							startIndex: index,
+							endIndex: index + 1,
+						},
+					},
+				},
+			],
+		},
 	});
 }

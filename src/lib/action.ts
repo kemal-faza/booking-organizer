@@ -1,6 +1,4 @@
 'use server';
-import { z } from 'zod/v4';
-import { jadwalPosting } from './utils';
 import { revalidatePath } from 'next/cache';
 import { JadwalBooking } from './types';
 import { redirect } from 'next/navigation';
@@ -11,108 +9,67 @@ import {
 	getAllData,
 } from './google-sheets.action';
 import { v4 as uuidv4 } from 'uuid';
+import { rangeJadwalPosting } from './data';
+import { makeKeyword } from './utils';
 
 export async function getJadwalWithoutHeader(data: string[]) {
 	return [...data.slice(1)].map((item) => {
 		return {
 			id: item[0],
-			judul: item[1],
-			tanggal_posting: item[2],
-			jam_posting: item[3],
-			link_gdrive: item[4],
+			keyword: item[1],
+			judul: item[2],
+			tanggal_posting: item[3],
+			jam_posting: item[4],
+			link_gdrive: item[5],
 		};
 	}) as JadwalBooking[];
 }
 
 export async function getAllJadwal() {
-	const data = await getAllData('Jadwal Postingan!A:E');
+	const data = await getAllData(rangeJadwalPosting);
 	return data;
 }
 
-export async function handleFormAddJadwal(
-	previousState: unknown,
-	formData: FormData,
-) {
-	const validatedData = jadwalPosting.safeParse({
-		judul: formData.get('judul'),
-		tanggal_posting: formData.get('tanggal_posting'),
-		jam_posting: formData.get('jam_posting'),
-		link_gdrive:
-			'https://drive.google.com/drive/folders/1-xAXHp4u1OSj6b1Fxeb6C5a2dhleiMJt?usp=drive_link',
-	});
-
-	if (!validatedData.success) {
-		return {
-			data: {
-				judul: formData.get('judul'),
-				tanggal_posting: formData.get('tanggal_posting'),
-				jam_posting: formData.get('jam_posting'),
-				link_gdrive:
-					'https://drive.google.com/drive/folders/1-xAXHp4u1OSj6b1Fxeb6C5a2dhleiMJt?usp=drive_link',
-			} as JadwalBooking,
-			errors: z.flattenError(validatedData.error),
-		};
-	}
-
-	await addData('Jadwal Postingan!A:E', [
+export async function handleFormAddJadwal(dataJadwal: JadwalBooking) {
+	await addData(rangeJadwalPosting, [
 		uuidv4(),
-		validatedData.data.judul,
-		validatedData.data.tanggal_posting,
-		validatedData.data.jam_posting,
-		validatedData.data.link_gdrive,
+		makeKeyword(
+			dataJadwal.judul,
+			dataJadwal.tanggal_posting,
+			dataJadwal.jam_posting,
+		),
+		dataJadwal.judul,
+		dataJadwal.tanggal_posting,
+		dataJadwal.jam_posting,
 	]);
 
 	revalidatePath('/');
-	redirect('/');
 }
 
 export async function handleFormEditJadwal(
 	id: string,
-	previousState: unknown,
-	formData: FormData,
+	dataJadwal: JadwalBooking,
 ) {
-	const validatedData = jadwalPosting.safeParse({
-		judul: formData.get('judul'),
-		tanggal_posting: formData.get('tanggal_posting'),
-		jam_posting: formData.get('jam_posting'),
-		link_gdrive:
-			'https://drive.google.com/drive/folders/1-xAXHp4u1OSj6b1Fxeb6C5a2dhleiMJt?usp=drive_link',
-	});
-
-	if (!validatedData.success) {
-		return {
-			data: {
-				judul: formData.get('judul'),
-				tanggal_posting: formData.get('tanggal_posting'),
-				jam_posting: formData.get('jam_posting'),
-				link_gdrive:
-					'https://drive.google.com/drive/folders/1-xAXHp4u1OSj6b1Fxeb6C5a2dhleiMJt?usp=drive_link',
-			} as JadwalBooking,
-			errors: z.flattenError(validatedData.error),
-		};
-	}
-
 	const prevData = await getAllJadwal();
 	const currentData = prevData.map((jadwal) => {
 		if (jadwal[0] == id) {
 			return [
 				jadwal[0],
-				validatedData.data.judul,
-				validatedData.data.tanggal_posting,
-				validatedData.data.jam_posting,
-				validatedData.data.link_gdrive,
+				makeKeyword(
+					dataJadwal.judul,
+					dataJadwal.tanggal_posting,
+					dataJadwal.jam_posting,
+				),
+				dataJadwal.judul,
+				dataJadwal.tanggal_posting,
+				dataJadwal.jam_posting,
 			];
-		} else {
-			return jadwal;
 		}
+		return jadwal;
 	});
-	await editData(
-		'Jadwal Postingan!A:E',
-		currentData as unknown as string[][],
-	);
+	await editData(rangeJadwalPosting, currentData as unknown as string[][]);
 
 	revalidatePath('/');
-	redirect('/');
 }
 
 export async function deleteJadwal(id: string) {
@@ -120,14 +77,12 @@ export async function deleteJadwal(id: string) {
 	const prevData = await getAllJadwal();
 	prevData.forEach((jadwal, index) => {
 		if (jadwal[0] == id) {
-			indexJadwal = index + 1;
+			indexJadwal = index;
 		}
 		return jadwal[0] !== id;
 	});
 
-	const range = `Jadwal Postingan!A${indexJadwal}:E${indexJadwal}`;
-
-	await deleteData(range);
+	await deleteData(indexJadwal as unknown as number, 'Jadwal Postingan');
 
 	revalidatePath('/');
 	redirect('/');
