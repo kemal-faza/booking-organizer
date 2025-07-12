@@ -1,6 +1,5 @@
 'use server';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { ExternalLink } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
 	Card,
 	CardContent,
@@ -9,13 +8,20 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import Link from 'next/link';
 import React from 'react';
 import AddForm from '@/components/dashboard/AddForm';
 import EditForm from '@/components/dashboard/EditForm';
 import DeleteForm from '@/components/dashboard/DeleteForm';
-import { DateTime } from 'luxon';
 import { getAllJadwal, getJadwalWithoutHeader } from '@/lib/action';
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover';
+import { Separator } from '@/components/ui/separator';
+import { teksBahanBooking } from '@/lib/utils';
+import CopyButton from '@/components/dashboard/CopyButton';
+import BookingButton from '@/components/dashboard/BookingButton';
 
 export default async function Home() {
 	const allJadwal = await getJadwalWithoutHeader(await getAllJadwal());
@@ -31,31 +37,36 @@ export default async function Home() {
 			</div>
 			<div className="flex flex-col gap-5 mt-5">
 				{allJadwal.map((jadwal, index) => {
-					const tanggal_posting = DateTime.fromJSDate(
-						new Date(jadwal.tanggal_posting),
-					);
 					return (
 						<Card key={index}>
 							<CardHeader>
 								<CardTitle>{jadwal.judul}</CardTitle>
 								<CardDescription>
-									{tanggal_posting.toLocaleString(
-										DateTime.DATE_MED,
-									)}{' '}
-									jam {jadwal.jam_posting}
+									{jadwal.tanggal_posting} jam{' '}
+									{jadwal.jam_posting}
 								</CardDescription>
 							</CardHeader>
 							<CardContent>
-								<Link
-									href={jadwal.link_gdrive || ''}
-									target="_blank"
-									className={buttonVariants({
-										variant: 'outline',
-										className: 'w-full',
-									})}>
-									<ExternalLink />
-									Google Drive
-								</Link>
+								<Popover>
+									<PopoverTrigger asChild>
+										<Button
+											variant={'outline'}
+											className="w-full">
+											Kirim Bahan Postingan
+										</Button>
+									</PopoverTrigger>
+									<PopoverContent>
+										<div className="p-4 bg-secondary rounded-md">
+											<div className="flex justify-center items-center">
+												<CopyButton jadwal={jadwal} />
+											</div>
+											<Separator className="my-3" />
+											<p className="text-sm">
+												{teksBahanBooking(jadwal)}
+											</p>
+										</div>
+									</PopoverContent>
+								</Popover>
 							</CardContent>
 							<CardFooter className="flex flex-col gap-2.5">
 								<EditForm jadwal={jadwal} />
@@ -65,6 +76,7 @@ export default async function Home() {
 					);
 				})}
 			</div>
+			<BookingButton />
 		</div>
 	);
 }

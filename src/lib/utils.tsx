@@ -1,10 +1,12 @@
 import { AnyFieldApi } from '@tanstack/react-form';
 import { clsx, type ClassValue } from 'clsx';
-import { Settings } from 'luxon';
+import { DateTime, Settings } from 'luxon';
 import { twMerge } from 'tailwind-merge';
 import * as z from 'zod/v4';
+import { JadwalBooking } from './types';
 
 Settings.defaultLocale = 'id';
+Settings.defaultZone = 'Asia/Jakarta';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -48,4 +50,28 @@ export function makeKeyword(
 	const newTanggalPosting = tanggal_posting.split(',')[1];
 	const newJamPosting = jam_posting.replace('.', ' ');
 	return `${judul} ${newTanggalPosting} ${newJamPosting}`;
+}
+
+export function teksBahanBooking(jadwal: JadwalBooking) {
+	const jamSekarang = DateTime.now().hour;
+	let waktu: string;
+	if (jamSekarang >= 4 && jamSekarang <= 10) {
+		waktu = 'pagi';
+	} else if (jamSekarang >= 11 && jamSekarang <= 14) {
+		waktu = 'siang';
+	} else if (jamSekarang >= 15 && jamSekarang <= 17) {
+		waktu = 'sore';
+	} else {
+		waktu = 'malam';
+	}
+
+	const tanggal = jadwal.tanggal_posting
+		.split(', ')[1]
+		.split(' ')
+		.splice(0, 2)
+		.join(' ');
+	const jam = jadwal.jam_posting.split('.')[0];
+
+	return `Selamat ${waktu}. Saya Muhamad Kemal Faza dari Biro Statistik. Izin mengirimkan bahan postingan di ${tanggal} jam ${jam}. Untuk isi postingannya mengenai ${jadwal.judul}.
+Terima kasih.`;
 }
