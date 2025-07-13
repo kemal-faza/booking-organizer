@@ -28,11 +28,7 @@ export default async function Home() {
 	return (
 		<div className="p-4">
 			<div className="flex justify-between">
-				<Button
-					variant={'destructive'}
-					size={'sm'}>
-					Logout
-				</Button>
+				<BookingButton allJadwal={allJadwal} />
 				<AddForm />
 			</div>
 			<div className="flex flex-col gap-5 mt-5">
@@ -58,7 +54,11 @@ export default async function Home() {
 									<PopoverContent>
 										<div className="p-4 bg-secondary rounded-md">
 											<div className="flex justify-center items-center">
-												<CopyButton jadwal={jadwal} />
+												<CopyButton
+													teks={teksBahanBooking(
+														jadwal,
+													)}
+												/>
 											</div>
 											<Separator className="my-3" />
 											<p className="text-sm">
@@ -76,7 +76,6 @@ export default async function Home() {
 					);
 				})}
 			</div>
-			<BookingButton />
 		</div>
 	);
 }

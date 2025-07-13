@@ -1,15 +1,13 @@
 'use client';
 import { Copy, CopyCheck } from 'lucide-react';
 import { Button } from '../ui/button';
-import { teksBahanBooking } from '@/lib/utils';
-import { JadwalBooking } from '@/lib/types';
 import { useState } from 'react';
 
-export default function CopyButton({ jadwal }: { jadwal: JadwalBooking }) {
+export default function CopyButton({ teks }: { teks: string }) {
 	const [isCopied, setIsCopied] = useState(false);
 	function handleCopy() {
 		setIsCopied(true);
-		navigator.clipboard.writeText(teksBahanBooking(jadwal));
+		navigator.clipboard.writeText(teks);
 	}
 
 	return (

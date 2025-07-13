@@ -49,7 +49,7 @@ export function makeKeyword(
 ) {
 	const newTanggalPosting = tanggal_posting.split(',')[1];
 	const newJamPosting = jam_posting.replace('.', ' ');
-	return `${judul} ${newTanggalPosting} ${newJamPosting}`;
+	return `${judul} ${newTanggalPosting} ${newJamPosting}`.toLowerCase();
 }
 
 export function teksBahanBooking(jadwal: JadwalBooking) {
@@ -73,5 +73,47 @@ export function teksBahanBooking(jadwal: JadwalBooking) {
 	const jam = jadwal.jam_posting.split('.')[0];
 
 	return `Selamat ${waktu}. Saya Muhamad Kemal Faza dari Biro Statistik. Izin mengirimkan bahan postingan di ${tanggal} jam ${jam}. Untuk isi postingannya mengenai ${jadwal.judul}.
-Terima kasih.`;
+			Terima kasih.`;
+}
+
+export function teksBooking(allJadwal: JadwalBooking[]) {
+	const jamSekarang = DateTime.now().hour;
+	let waktu: string;
+	if (jamSekarang >= 4 && jamSekarang <= 10) {
+		waktu = 'pagi';
+	} else if (jamSekarang >= 11 && jamSekarang <= 14) {
+		waktu = 'siang';
+	} else if (jamSekarang >= 15 && jamSekarang <= 17) {
+		waktu = 'sore';
+	} else {
+		waktu = 'malam';
+	}
+
+	if (allJadwal.length > 1) {
+		let teks = `Selamat ${waktu}. Saya Muhamad Kemal Faza dari Biro Statistik. Izin membooking postingan pada: `;
+		allJadwal.forEach((jadwal, index) => {
+			const tanggal = jadwal.tanggal_posting
+				.split(', ')[1]
+				.split(' ')
+				.splice(0, 2)
+				.join(' ');
+			const jam = jadwal.jam_posting.split('.')[0];
+			teks += `\n${index + 1}. ${tanggal} jam ${jam} mengenai ${
+				jadwal.judul
+			}`;
+		});
+		teks += '\nTerima kasih.';
+		return teks;
+	} else if (allJadwal.length == 1) {
+		const jadwal = allJadwal[0];
+		const tanggal = jadwal.tanggal_posting
+			.split(', ')[1]
+			.split(' ')
+			.splice(0, 2)
+			.join(' ');
+		const jam = jadwal.jam_posting.split('.')[0];
+
+		return `Selamat ${waktu}. Saya Muhamad Kemal Faza dari Biro Statistik. Izin mengirimkan bahan postingan di ${tanggal} jam ${jam}. Untuk isi postingannya mengenai ${jadwal.judul}.\nTerima kasih.`;
+	}
+	return '';
 }
