@@ -1,14 +1,7 @@
 'use client';
 import { teksBooking } from '@/lib/utils';
 import { Button } from '../ui/button';
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import {
 	Dialog,
 	DialogContent,
@@ -119,12 +112,16 @@ export default function BookingButton({
 												<CopyButton
 													teks={teksBooking(
 														selectedJadwal,
+														'postingan',
 													)}
 												/>
 											</div>
 											<Separator className="my-3" />
 											<p className="text-sm">
-												{teksBooking(selectedJadwal)}
+												{teksBooking(
+													selectedJadwal,
+													'postingan',
+												)}
 											</p>
 										</div>
 									</CardContent>
@@ -133,16 +130,27 @@ export default function BookingButton({
 							<TabsContent value="password">
 								<Card>
 									<CardHeader>
-										<CardTitle>Password</CardTitle>
-										<CardDescription>
-											Change your password here. After
-											saving, you&apos;ll be logged out.
-										</CardDescription>
+										<CardTitle>Story</CardTitle>
 									</CardHeader>
-									<CardContent className="grid gap-6"></CardContent>
-									<CardFooter>
-										<Button>Save password</Button>
-									</CardFooter>
+									<CardContent className="grid gap-6">
+										<div className="p-4 bg-secondary rounded-md">
+											<div className="flex justify-center items-center">
+												<CopyButton
+													teks={teksBooking(
+														selectedJadwal,
+														'story',
+													)}
+												/>
+											</div>
+											<Separator className="my-3" />
+											<p className="text-sm">
+												{teksBooking(
+													selectedJadwal,
+													'story',
+												)}
+											</p>
+										</div>
+									</CardContent>
 								</Card>
 							</TabsContent>
 						</Tabs>

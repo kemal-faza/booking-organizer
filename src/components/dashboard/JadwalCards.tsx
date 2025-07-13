@@ -17,6 +17,7 @@ import { teksBahanBooking } from '@/lib/utils';
 import { Separator } from '../ui/separator';
 import EditForm from './EditForm';
 import DeleteForm from './DeleteForm';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 export default function JadwalCards({
 	allJadwal,
@@ -54,23 +55,76 @@ export default function JadwalCards({
 										<Button
 											variant={'outline'}
 											className="w-full">
-											Kirim Bahan Postingan
+											Kirim Bahan Post
 										</Button>
 									</PopoverTrigger>
 									<PopoverContent>
-										<div className="p-4 bg-secondary rounded-md">
-											<div className="flex justify-center items-center">
-												<CopyButton
-													teks={teksBahanBooking(
-														jadwal,
-													)}
-												/>
-											</div>
-											<Separator className="my-3" />
-											<p className="text-sm">
-												{teksBahanBooking(jadwal)}
-											</p>
-										</div>
+										<Tabs defaultValue="account">
+											<TabsList>
+												<TabsTrigger value="account">
+													Postingan
+												</TabsTrigger>
+												<TabsTrigger value="password">
+													Story
+												</TabsTrigger>
+											</TabsList>
+											<TabsContent value="account">
+												<Card>
+													<CardHeader>
+														<CardTitle>
+															Postingan
+														</CardTitle>
+													</CardHeader>
+													<CardContent className="grid gap-6">
+														<div className="p-4 bg-secondary rounded-md">
+															<div className="flex justify-center items-center">
+																<CopyButton
+																	teks={teksBahanBooking(
+																		jadwal,
+																		'postingan',
+																	)}
+																/>
+															</div>
+															<Separator className="my-3" />
+															<p className="text-sm">
+																{teksBahanBooking(
+																	jadwal,
+																	'postingan',
+																)}
+															</p>
+														</div>
+													</CardContent>
+												</Card>
+											</TabsContent>
+											<TabsContent value="password">
+												<Card>
+													<CardHeader>
+														<CardTitle>
+															Story
+														</CardTitle>
+													</CardHeader>
+													<CardContent className="grid gap-6">
+														<div className="p-4 bg-secondary rounded-md">
+															<div className="flex justify-center items-center">
+																<CopyButton
+																	teks={teksBahanBooking(
+																		jadwal,
+																		'story',
+																	)}
+																/>
+															</div>
+															<Separator className="my-3" />
+															<p className="text-sm">
+																{teksBahanBooking(
+																	jadwal,
+																	'story',
+																)}
+															</p>
+														</div>
+													</CardContent>
+												</Card>
+											</TabsContent>
+										</Tabs>
 									</PopoverContent>
 								</Popover>
 							</CardContent>

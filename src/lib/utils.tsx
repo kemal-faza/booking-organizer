@@ -52,7 +52,7 @@ export function makeKeyword(
 	return `${judul} ${newTanggalPosting} ${newJamPosting}`.toLowerCase();
 }
 
-export function teksBahanBooking(jadwal: JadwalBooking) {
+export function teksBahanBooking(jadwal: JadwalBooking, type: string) {
 	const jamSekarang = DateTime.now().hour;
 	let waktu: string;
 	if (jamSekarang >= 4 && jamSekarang <= 10) {
@@ -72,11 +72,11 @@ export function teksBahanBooking(jadwal: JadwalBooking) {
 		.join(' ');
 	const jam = jadwal.jam_posting.split('.')[0];
 
-	return `Selamat ${waktu}. Saya Muhamad Kemal Faza dari Biro Statistik. Izin mengirimkan bahan postingan di ${tanggal} jam ${jam}. Untuk isi postingannya mengenai ${jadwal.judul}.
+	return `Selamat ${waktu}. Saya Muhamad Kemal Faza dari Biro Statistik. Izin mengirimkan bahan ${type} di ${tanggal} jam ${jam}. Untuk isi ${type}nya mengenai ${jadwal.judul}.
 			Terima kasih.`;
 }
 
-export function teksBooking(allJadwal: JadwalBooking[]) {
+export function teksBooking(allJadwal: JadwalBooking[], type: string) {
 	const jamSekarang = DateTime.now().hour;
 	let waktu: string;
 	if (jamSekarang >= 4 && jamSekarang <= 10) {
@@ -90,7 +90,7 @@ export function teksBooking(allJadwal: JadwalBooking[]) {
 	}
 
 	if (allJadwal.length > 1) {
-		let teks = `Selamat ${waktu}. Saya Muhamad Kemal Faza dari Biro Statistik. Izin membooking postingan pada: `;
+		let teks = `Selamat ${waktu}. Saya Muhamad Kemal Faza dari Biro Statistik. Izin membooking ${type} pada: `;
 		allJadwal.forEach((jadwal, index) => {
 			const tanggal = jadwal.tanggal_posting
 				.split(', ')[1]
@@ -113,7 +113,7 @@ export function teksBooking(allJadwal: JadwalBooking[]) {
 			.join(' ');
 		const jam = jadwal.jam_posting.split('.')[0];
 
-		return `Selamat ${waktu}. Saya Muhamad Kemal Faza dari Biro Statistik. Izin mengirimkan bahan postingan di ${tanggal} jam ${jam}. Untuk isi postingannya mengenai ${jadwal.judul}.\nTerima kasih.`;
+		return `Selamat ${waktu}. Saya Muhamad Kemal Faza dari Biro Statistik. Izin membooking ${type} di ${tanggal} jam ${jam}. Untuk isi ${type}nya mengenai ${jadwal.judul}.\nTerima kasih.`;
 	}
 	return '';
 }
