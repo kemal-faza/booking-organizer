@@ -13,7 +13,8 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={`antialiased relative min-h-screen`}>
+			<body
+				className={`antialiased relative min-h-screen flex justify-center`}>
 				{children}
 			</body>
 		</html>
