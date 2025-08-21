@@ -72,8 +72,7 @@ export function teksBahanBooking(jadwal: JadwalBooking, type: string) {
 		.join(' ');
 	const jam = jadwal.jam_posting.split('.')[0];
 
-	return `Selamat ${waktu}. Saya Muhamad Kemal Faza dari Biro Statistik. Izin mengirimkan bahan ${type} di ${tanggal} jam ${jam}. Untuk isi ${type}nya mengenai ${jadwal.judul}.
-			Terima kasih.`;
+	return `Selamat ${waktu}. Saya Muhamad Kemal Faza dari Biro Statistik. Izin mengirimkan bahan ${type} di ${tanggal} jam ${jam}. Untuk isi ${type}nya mengenai ${jadwal.judul}.\nTerima kasih.`;
 }
 
 export function teksBooking(allJadwal: JadwalBooking[], type: string) {
