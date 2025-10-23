@@ -11,7 +11,7 @@ credentials.private_key = credentials.private_key
 	.join('\n');
 
 const auth = await google.auth.getClient({
-	projectId: process.env.PROJECT_ID,
+	projectId: credentials.project_id,
 	credentials,
 	scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
